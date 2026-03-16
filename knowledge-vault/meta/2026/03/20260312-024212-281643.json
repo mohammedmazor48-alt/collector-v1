@@ -1,0 +1,29 @@
+{
+  "id": "20260312-024212-281643",
+  "type": "web",
+  "title": "wechat-article-blocked",
+  "source": "https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ",
+  "source_type": "url",
+  "captured_at": "2026-03-12T02:42:49.212830+08:00",
+  "published_at": null,
+  "author": null,
+  "language": "zh",
+  "summary": "Jina Reader 返回了微信验证页，而不是文章正文",
+  "content_text": "Jina Reader 返回了微信验证页，而不是文章正文",
+  "content_hash": "sha256:75e1d8e588feaf2ce68edde20a02f667030adb77daed5ffec6b09edef1196058",
+  "source_file_hash": null,
+  "status": "blocked",
+  "tags": [],
+  "created_at": "2026-03-12T02:42:49.212830+08:00",
+  "updated_at": "2026-03-12T02:42:49.212830+08:00",
+  "raw_path": "knowledge-vault\\raw\\2026\\03\\20260312-024212-281643\\source-wechat.html",
+  "dedupe_skipped": {
+    "content_hash": true,
+    "reason": "status_blocked"
+  },
+  "block_reason": "wechat_captcha",
+  "final_url": "https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ",
+  "wechat_backend": "jina_reader",
+  "note_path": "knowledge-vault\\notes\\2026\\03\\20260312-024212-281643-wechat-article-blocked.md",
+  "meta_path": "knowledge-vault\\meta\\2026\\03\\20260312-024212-281643.json"
+}

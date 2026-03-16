@@ -1,0 +1,136 @@
+请在这个项目中实现一个可运行的 `export_site_data.py` V1：
+
+项目根目录：
+D:\openclaw\workspaces\think-tank\collector-v1
+
+项目背景：
+这是一个本地内容采集系统 `collector-v1`，已经会把网页、图片、PDF、音频、视频处理成：
+- Markdown：knowledge-vault/notes/
+- 元数据 JSON：knowledge-vault/meta/
+- SQLite：knowledge-vault/index.sqlite
+当前目标不是改现有采集链路，而是新增一个“网站导出层”，把已有内容导出为静态网站可直接读取的 JSON 数据，供后续 GitHub + Vercel 查询站使用。
+
+你的任务：
+实现 `export_site_data.py`，把本地内容导出到：
+- site-data/index.json
+- site-data/stats.json
+- site-data/docs/<id>.json
+
+要求如下：
+
+1. 输入来源
+- 以 `knowledge-vault/meta/**/*.json` 为主
+- 每条 meta 里如果有 `note_path`，读取对应 Markdown 文件
+- 不依赖修改现有 SQLite 逻辑
+- 不破坏现有 ingest.py / ingest_remote.py / ingest_video_page.py
+
+2. 导出规则
+- 默认只导出 `status` 为 `processed` 或 `partial` 的记录
+- 默认不导出 `blocked` / `failed`
+- 如果某条记录缺少必要字段或 Markdown 文件不存在，允许跳过，并在控制台打印简短提示
+
+3. 输出目录
+在项目根目录创建/覆盖：
+- `site-data/index.json`
+- `site-data/stats.json`
+- `site-data/docs/`
+
+4. `index.json` 结构
+输出数组，每条记录尽量包含这些字段：
+- id
+- title
+- type
+- summary
+- tags
+- status
+- created_at
+- updated_at
+- source
+- detail_path
+
+其中：
+- `detail_path` 建议形如 `/docs/<id>`
+
+注意：
+- `index.json` 只放轻量字段，不放全文 markdown，不放全文 content_text
+
+5. `docs/<id>.json` 结构
+每条详情建议包含：
+- id
+- title
+- type
+- summary
+- tags
+- status
+- source
+- created_at
+- updated_at
+- note_path
+- meta_path
+- markdown
+- content_text
+- summary_data
+- duration（如果有）
+- language（如果有）
+
+如果某些字段不存在，可以为 null 或省略，但结构尽量稳定。
+
+6. `stats.json`
+输出：
+- total_docs
+- by_type
+- updated_at
+
+例如：
+{
+"total_docs": 123,
+"by_type": {
+"video": 20,
+"audio": 10,
+"web": 80,
+"pdf": 8,
+"image": 5
+},
+"updated_at": "..."
+}
+
+7. 脚本命令行
+V1 至少支持：
+- `python export_site_data.py`
+可选地支持：
+- `--out-dir`
+- `--limit`
+- `--include-blocked`
+
+如果你觉得 V1 先只做最基础命令最稳，也可以先只实现默认行为。
+
+8. 实现风格
+- 保持和现有项目代码风格一致
+- 尽量简单、稳定、可维护
+- 优先使用标准库
+- 输出 JSON 时使用 UTF-8 和 `ensure_ascii=False`
+
+9. README
+请同步更新 `README.md`，补一小段说明：
+- `export_site_data.py` 的用途
+- 输出目录结构
+- 最基本使用方法
+
+10. 交付要求
+完成后请明确说明：
+- 新增了哪些文件
+- 修改了哪些文件
+- 如何运行
+- 运行后会生成什么
+
+11. 重要约束
+- 不要重构现有 ingest 主链路
+- 不要引入重型新依赖
+- 不要擅自改变 knowledge-vault 现有存储格式
+- 不要把网站实现也一起做了，这次只做数据导出脚本
+
+补充说明：
+这个导出脚本是给后续的 Vercel 查询站用的，所以要优先考虑“静态 JSON 可直接被前端读取”的结构，而不是本地 CLI 人工查看结构。
+请尽量先阅读项目中现有的 ingest.py、README.md、knowledge-vault/meta 的结构，再实施最小改动方案。
+
+请直接开始实现，并在完成后给出新增/修改文件清单和使用说明。

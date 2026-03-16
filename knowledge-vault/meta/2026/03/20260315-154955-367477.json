@@ -1,0 +1,43 @@
+{
+  "id": "20260315-154955-367477",
+  "type": "web",
+  "title": "#新大陆计划# 张高澄道长一席谈访谈，胜过读十年书，字字珠玑，让人瞬间开悟",
+  "source": "https://mbd.baidu.com/newspage/data/videolanding?nid=sv_3352848820068511906&sourceFrom=share",
+  "source_type": "url",
+  "captured_at": "2026-03-15T15:49:58.105243+08:00",
+  "published_at": null,
+  "author": null,
+  "language": "zh",
+  "summary": "新大陆计划# 张高澄道长一席谈访谈，胜过读十年书，字字珠玑，让人瞬间开悟",
+  "content_text": "新大陆计划# 张高澄道长一席谈访谈，胜过读十年书，字字珠玑，让人瞬间开悟",
+  "content_hash": "sha256:d70249b9f486a2a57e01550c05672048d8a022117164e9b165d53b78e494d93d",
+  "source_file_hash": null,
+  "status": "processed",
+  "tags": [
+    "Baidu",
+    "视频",
+    "转写"
+  ],
+  "created_at": "2026-03-15T15:49:58.105243+08:00",
+  "updated_at": "2026-03-15T15:49:58.105243+08:00",
+  "raw_path": "knowledge-vault\\raw\\2026\\03\\20260315-154955-367477\\source.html",
+  "summary_data": {
+    "summary": "新大陆计划# 张高澄道长一席谈访谈，胜过读十年书，字字珠玑，让人瞬间开悟",
+    "bullets": [
+      "新大陆计划# 张高澄道长一席谈访谈，胜过读十年书，字字珠玑，让人瞬间开悟"
+    ],
+    "action_items": [],
+    "keywords": [
+      "新大陆计划",
+      "张高澄道长一席谈访谈",
+      "胜过读十年书",
+      "字字珠玑",
+      "让人瞬间开悟"
+    ],
+    "backend": "local",
+    "fallback_reason": "Error code: 401 - {'error': {'message': 'Invalid Authentication', 'type': 'invalid_authentication_error'}}",
+    "backend_requested": "openai"
+  },
+  "note_path": "knowledge-vault\\notes\\2026\\03\\20260315-154955-367477-新大陆计划-张高澄道长一席谈访谈-胜过读十年书-字字珠玑-让人瞬间开悟.md",
+  "meta_path": "knowledge-vault\\meta\\2026\\03\\20260315-154955-367477.json"
+}

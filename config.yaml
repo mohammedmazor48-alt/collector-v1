@@ -1,0 +1,106 @@
+storage:
+  base_dir: "./knowledge-vault"
+  raw_dir: "raw"
+  notes_dir: "notes"
+  meta_dir: "meta"
+  assets_dir: "assets"
+  logs_dir: "logs"
+
+database:
+  path: "./knowledge-vault/index.sqlite"
+  enable_fts: true
+
+processing:
+  timezone: "Asia/Shanghai"
+  default_language: "zh"
+  summarize: true
+
+summary:
+  enabled: true
+  mode: "openai"
+  fallback_to_local: true
+  max_input_chars: 12000
+  max_summary_chars: 500
+  max_bullets: 5
+  extract_action_items: true
+  prompt_style: "default"
+  openai:
+    api_key: ""
+    base_url: "https://api.kimi.com/coding/v1"
+    model: "kimi-latest"
+    temperature: 0.2
+    timeout_sec: 60
+
+web:
+  timeout_sec: 20
+  save_raw_html: true
+  extractor_order:
+    - trafilatura
+    - readability
+    - bs4
+
+video_page:
+  browser_first_hosts:
+    - baidu.com
+    - mbd.baidu.com
+    - qq.com
+    - v.qq.com
+    - video.qq.com
+    - weixin.qq.com
+    - mp.weixin.qq.com
+  block_hints:
+    - 安全验证
+    - 验证码
+    - 请稍后重试
+    - 访问异常
+    - 请求异常
+    - 验证后继续
+    - 网络不给力
+    - 人机验证
+    - secverify
+    - captcha
+  browser_wait_seconds: 20
+  block_wait_seconds: 300
+  notify_file: ""
+  notify_webhook: ""
+  forward_progress_events: true
+  auto_export_site: true
+  auto_publish_site: true
+
+image:
+  ocr_engine: "tesseract"
+  tesseract_lang: "chi_sim+eng"
+  generate_summary: true
+  min_text_chars_for_processed: 10
+
+pdf:
+  text_first: true
+  ocr_fallback: true
+  direct_text_min_chars: 80
+  ocr_dpi: 200
+  max_ocr_pages: 20
+
+audio:
+  asr_engine: "faster-whisper"
+  model_size: "small"
+  language: "zh"
+  compute_type: "int8"
+  beam_size: 5
+  vad_filter: true
+
+video:
+  extract_audio_codec: "mp3"
+  extract_thumbnail: false
+
+dedupe:
+  source_strict: true
+  source_file_hash_strict: true
+  web_content_hash_strict: true
+  file_content_hash_strict: false
+  warn_on_file_content_hash_duplicate: true
+  blocked_skip_content_hash: true
+
+tools:
+  ffmpeg: "C:/Users/深蓝/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-8.0.1-full_build/bin/ffmpeg.exe"
+  tesseract: "C:/Program Files/Tesseract-OCR/tesseract.exe"
+  pdftoppm: "C:/Users/深蓝/AppData/Local/Microsoft/WinGet/Packages/oschwartz10612.Poppler_Microsoft.Winget.Source_8wekyb3d8bbwe/poppler-25.07.0/Library/bin/pdftoppm.exe"

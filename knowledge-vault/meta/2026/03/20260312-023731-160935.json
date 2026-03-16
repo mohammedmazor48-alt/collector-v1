@@ -1,0 +1,51 @@
+{
+  "id": "20260312-023731-160935",
+  "type": "web",
+  "title": "wechat-article",
+  "source": "https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ",
+  "source_type": "url",
+  "captured_at": "2026-03-12T02:38:07.673510+08:00",
+  "published_at": null,
+  "author": null,
+  "language": "zh",
+  "summary": "Title: Weixin Official Accounts Platform；URL Source: https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ；Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page.；Markdown Content:；当前环境异常，完成验证后即可继续访问",
+  "content_text": "Title: Weixin Official Accounts Platform\n\nURL Source: https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ\n\nWarning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page.\n\nMarkdown Content:\n环境异常\n\n当前环境异常，完成验证后即可继续访问。\n\n去验证",
+  "content_hash": "sha256:a39c474d36c8cd1a457331947b0d4d6b1f1365a51c5e4d8a2ead210357c55e26",
+  "source_file_hash": null,
+  "status": "processed",
+  "tags": [],
+  "created_at": "2026-03-12T02:38:07.673510+08:00",
+  "updated_at": "2026-03-12T02:38:07.673510+08:00",
+  "raw_path": "knowledge-vault\\raw\\2026\\03\\20260312-023731-160935\\source-wechat.html",
+  "summary_data": {
+    "summary": "Title: Weixin Official Accounts Platform；URL Source: https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ；Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page.；Markdown Content:；当前环境异常，完成验证后即可继续访问",
+    "bullets": [
+      "Title: Weixin Official Accounts Platform",
+      "URL Source: https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ",
+      "Warning: This page maybe requiring CAPTCHA, please make sure you are authorized to access this page.",
+      "Markdown Content:",
+      "当前环境异常，完成验证后即可继续访问"
+    ],
+    "action_items": [
+      "当前环境异常，完成验证后即可继续访问"
+    ],
+    "keywords": [
+      "page",
+      "Title",
+      "Weixin",
+      "Official",
+      "Accounts",
+      "Platform",
+      "URL",
+      "Source"
+    ],
+    "backend": "local",
+    "fallback_reason": "Error code: 401 - {'error': {'message': 'Invalid Authentication', 'type': 'invalid_authentication_error'}}",
+    "backend_requested": "openai"
+  },
+  "block_reason": null,
+  "final_url": "https://mp.weixin.qq.com/s/NauE4IlyZEfJByn4hL2woQ",
+  "wechat_backend": "jina_reader",
+  "note_path": "knowledge-vault\\notes\\2026\\03\\20260312-023731-160935-wechat-article.md",
+  "meta_path": "knowledge-vault\\meta\\2026\\03\\20260312-023731-160935.json"
+}

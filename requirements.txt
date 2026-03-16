@@ -1,0 +1,14 @@
+PyYAML==6.0.2
+httpx==0.28.1
+beautifulsoup4==4.13.3
+markdownify==1.1.0
+trafilatura==2.0.0
+python-slugify==8.0.4
+pydantic==2.10.6
+PyMuPDF==1.25.3
+faster-whisper==1.1.1
+pdf2image==1.17.0
+pytesseract==0.3.13
+Pillow==11.1.0
+openai==1.68.2
+playwright==1.58.0

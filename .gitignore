@@ -1,0 +1,34 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Local editor / agent state
+.claude/
+
+# Runtime temp files
+*.log
+tmp_*.html
+
+# Local data and generated artifacts
+knowledge-vault/raw/
+knowledge-vault/assets/
+knowledge-vault/logs/
+knowledge-vault/index.sqlite
+site-data/
+wechat_test_output/
+
+# Secrets / local env
+cloud/.env
+
+# Embedded repos kept local
+Agent-Reach/
+wechat-article-for-ai/
+
+# OS / misc
+Thumbs.db
+desktop.ini
