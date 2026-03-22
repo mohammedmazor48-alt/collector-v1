@@ -1,4 +1,5 @@
 import argparse
+import io
 import json
 import re
 import subprocess
@@ -7,6 +8,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlparse
+
+# Windows GBK 终端下强制 UTF-8 输出，避免打印中文时崩溃
+if sys.stdout.encoding and sys.stdout.encoding.lower() in ("gbk", "gb2312", "cp936"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 import httpx
 from playwright.sync_api import TimeoutError as PlaywrightTimeoutError

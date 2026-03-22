@@ -294,6 +294,82 @@ def propose_title_from_summary(summary_data: dict, content_text: str = "", media
     return f"{media_type}转写记录"
 
 
+def format_transcript_with_llm(full_text: str, segments: list) -> str | None:
+    """用 LLM 整理转录文本：繁转简、去口语词、添加结构标题。
+    返回完整的 Markdown 字符串（含整理版 + 折叠原文），失败返回 None。"""
+    cfg = load_config()
+    summary_cfg = cfg.get("summary", {})
+    if not summary_cfg.get("enabled", True) or summary_cfg.get("mode") != "openai":
+        return None
+    openai_cfg = summary_cfg.get("openai", {})
+    api_key = first_non_empty(get_env("OPENAI_API_KEY"), openai_cfg.get("api_key"))
+    if not api_key:
+        return None
+
+    text = truncate_text(full_text or "", 14000).strip()
+    prompt = f"""你是一个视频内容整理助手。请将以下视频语音转录内容整理成结构化的中文文章。
+
+整理要求：
+1. 将所有繁体字转换为简体字
+2. 纠正明显的语音识别错误（同音字、近音字）
+3. 去除口语填充词（啊、嗯、就是、对吧、你知道等）
+4. 按内容逻辑划分段落，添加 ### 级别小标题
+5. 合并相关内容，形成完整流畅的段落
+6. 严格保持原文意思，不添加原文没有的内容
+
+直接输出 Markdown 正文，不要加代码块，格式如下：
+## 视频语音转写（整理版）
+
+[整理后的正文，带 ### 小标题]
+
+原始转录文本：
+{text}"""
+
+    try:
+        base_url = first_non_empty(get_env("OPENAI_BASE_URL"), openai_cfg.get("base_url"), "https://api.openai.com/v1")
+        model = first_non_empty(get_env("OPENAI_MODEL"), openai_cfg.get("model"), "gpt-4o-mini")
+        default_headers = {}
+        if "kimi.com" in (base_url or ""):
+            default_headers["User-Agent"] = "claude-code/1.0"
+        client = OpenAI(api_key=api_key, base_url=base_url, timeout=120, default_headers=default_headers)
+        resp = client.chat.completions.create(
+            model=model,
+            temperature=0.3,
+            messages=[
+                {"role": "system", "content": "你是一个严谨的中文内容整理助手，输出规范 Markdown。"},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        formatted = (resp.choices[0].message.content or "").strip()
+        if not formatted:
+            return None
+
+        # 拼接折叠的逐句原文
+        raw_lines = []
+        for seg in (segments or []):
+            ts = seg.get("start_ts", "")
+            t = (seg.get("text") or "").strip()
+            if t:
+                raw_lines.append(f"[{ts}] {t}")
+        raw_block = ""
+        if raw_lines:
+            raw_block = (
+                "\n\n---\n\n"
+                "<details>\n"
+                "<summary>📋 点击查看逐句原文（带时间戳）</summary>\n\n"
+                "```\n"
+                + "\n".join(raw_lines)
+                + "\n```\n\n</details>"
+            )
+
+        return formatted + raw_block
+
+    except Exception as e:
+        print(f"[!] LLM 转录整理失败，降级到本地格式化: {e}")
+        return None
+
+
+
 def render_grouped_transcript_markdown(groups: list, segments: list, media_type: str = "视频") -> str:
     """渲染整理版（带轻量纠错）+ 逐句原始版 Markdown"""
     lines = []

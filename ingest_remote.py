@@ -1,4 +1,5 @@
 import argparse
+import io
 import json
 import mimetypes
 import subprocess
@@ -8,6 +9,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
+
+# Windows GBK 终端下强制 UTF-8 输出
+if sys.stdout.encoding and sys.stdout.encoding.lower() in ("gbk", "gb2312", "cp936"):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 from processors.db import init_db
 from processors.utils import ensure_dir, load_config, now_iso, sha256_text

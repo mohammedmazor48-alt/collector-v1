@@ -64,30 +64,13 @@ summary: {doc.get('summary', '')}
 
 def render_markdown(doc: dict) -> str:
     duplicate_warning = doc.get("duplicate_warning")
-    dedupe_skipped = doc.get("dedupe_skipped")
     duplicate_block = ""
     if duplicate_warning:
-        duplicate_block = f"\n- 重复提示：{duplicate_warning.get('type')}\n- 已存在记录：{duplicate_warning.get('existing_id')}\n- 已存在标题：{duplicate_warning.get('existing_title', '')}\n- 已存在笔记：{duplicate_warning.get('existing_note', '')}\n"
-    dedupe_block = ""
-    if dedupe_skipped:
-        dedupe_block = f"\n- 去重跳过：content_hash\n- 跳过原因：{dedupe_skipped.get('reason')}\n"
+        duplicate_block = f"\n> ⚠️ 重复记录：已存在 {duplicate_warning.get('existing_id')} - {duplicate_warning.get('existing_title', '')}\n"
     frontmatter = make_frontmatter(doc)
-    body = f"""# {doc.get('title') or 'Untitled'}
-
-## 基本信息
-
-- 类型：{doc.get('type', '')}
-- 来源：{doc.get('source', '')}
-- 作者：{doc.get('author', '')}
-- 采集时间：{doc.get('captured_at', '')}
-- 发布时间：{doc.get('published_at', '')}
-
-{doc.get('content_md', '') or ''}
-
-## 附注
-
-- 状态：{doc.get('status', '')}{duplicate_block}{dedupe_block}
-"""
+    title = doc.get('title') or 'Untitled'
+    content_md = doc.get('content_md', '') or ''
+    body = f"# {title}\n\n{duplicate_block}{content_md}\n"
     return frontmatter + "\n" + body
 
 

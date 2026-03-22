@@ -32,7 +32,7 @@ def main():
     )
     parser.add_argument(
         "--site-dir",
-        default=r"D:\openclaw\workspaces\think-tank\collector-site",
+        default=r"D:\tools\collector-site",
         help="collector-site 项目目录"
     )
     parser.add_argument(
@@ -95,27 +95,40 @@ def main():
     # 步骤 2: 同步数据
     print("\n[2/5] 同步数据到 collector-site/data...")
     try:
-        # 删除旧数据
         if site_data_target.exists():
             shutil.rmtree(site_data_target)
             print("    已删除旧数据")
-
-        # 复制新数据
         shutil.copytree(site_data_dir, site_data_target)
-        print("    数据同步完成")
-
-        # 统计文件
         json_files = list(site_data_target.rglob("*.json"))
         print(f"    同步了 {len(json_files)} 个 JSON 文件")
-
     except Exception as e:
         print(f"[!] 同步失败: {e}")
         sys.exit(1)
+
+    # 步骤 2.5: 同步图片到 public/images
+    images_src = project_root / "knowledge-vault" / "assets" / "images"
+    images_dst = site_dir / "public" / "images"
+    has_images = False
+    if images_src.exists():
+        print("\n[2.5] 同步图片到 collector-site/public/images...")
+        try:
+            if images_dst.exists():
+                shutil.rmtree(images_dst)
+            shutil.copytree(images_src, images_dst)
+            img_files = list(images_dst.rglob("*.*"))
+            print(f"    同步了 {len(img_files)} 张图片")
+            has_images = True
+        except Exception as e:
+            print(f"[!] 图片同步失败（不影响主流程）: {e}")
+    else:
+        print("\n[2.5] 无图片目录，跳过")
 
     # 步骤 3: Git add
     print("\n[3/5] git add data...")
     try:
         run_command(["git", "add", "data"], cwd=site_dir)
+        if has_images:
+            run_command(["git", "add", "public/images"], cwd=site_dir)
         print("    git add 完成")
     except subprocess.CalledProcessError:
         print("[!] git add 失败")

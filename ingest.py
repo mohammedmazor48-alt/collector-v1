@@ -1,4 +1,6 @@
 import argparse
+import subprocess
+import sys
 from pathlib import Path
 
 from processors.audio import process_audio
@@ -15,6 +17,24 @@ IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"}
 PDF_EXTS = {".pdf"}
 AUDIO_EXTS = {".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg"}
 VIDEO_EXTS = {".mp4", ".mkv", ".mov", ".avi", ".webm"}
+
+# 需要用 ingest_video_page.py 处理的视频页面域名
+VIDEO_PAGE_HOSTS = {
+    "mbd.baidu.com",
+    "baidu.com",
+    "v.qq.com",
+    "video.qq.com",
+}
+
+
+def is_video_page_url(url: str) -> bool:
+    """判断是否为需要 Playwright 提取真实视频地址的页面 URL"""
+    try:
+        from urllib.parse import urlparse
+        host = urlparse(url).hostname or ""
+        return any(host == h or host.endswith("." + h) for h in VIDEO_PAGE_HOSTS)
+    except Exception:
+        return False
 
 
 def detect_input_type(value: str) -> str:
@@ -41,6 +61,18 @@ def main():
     parser.add_argument("--notify-file", default="")
     parser.add_argument("--notify-webhook", default="")
     args = parser.parse_args()
+
+    # 视频页面 URL 自动转发给 ingest_video_page.py
+    if is_url(args.input) and is_video_page_url(args.input):
+        print(f"[auto-route] 检测到视频页面 URL，转发给 ingest_video_page.py")
+        cmd = [sys.executable, str(Path(__file__).parent / "ingest_video_page.py"), args.input]
+        if args.tags:
+            cmd += ["--tags", args.tags]
+        if args.title:
+            cmd += ["--title", args.title]
+        if args.force:
+            cmd.append("--force")
+        raise SystemExit(subprocess.call(cmd))
 
     init_db()
     cfg = load_config(); dedupe_cfg = cfg.get("dedupe", {})

@@ -1,5 +1,6 @@
 import argparse
 import json
+import shutil
 from pathlib import Path
 from datetime import datetime, timezone
 from collections import defaultdict
@@ -93,6 +94,7 @@ def build_detail_record(meta: dict, markdown: str | None, markdown_missing: bool
         "note_path": meta.get("note_path", ""),
         "meta_path": meta.get("meta_path", ""),
         "markdown": markdown,
+        "content_html": meta.get("content_html"),
         "content_text": meta.get("content_text", ""),
         "summary_data": meta.get("summary_data"),
         "duration": meta.get("duration"),
@@ -135,9 +137,12 @@ def export_site_data(
     meta_files = collect_meta_files(base_dir)
     print(f"[*] 找到 {len(meta_files)} 个 meta 文件")
 
-    # 准备输出目录
+    # 准备输出目录（清理旧的 docs/ 防止幽灵文件残留）
     out_dir.mkdir(parents=True, exist_ok=True)
     docs_dir = out_dir / "docs"
+    if docs_dir.exists():
+        shutil.rmtree(docs_dir)
+        print(f"[*] 已清理旧 docs/ 目录")
     docs_dir.mkdir(parents=True, exist_ok=True)
 
     # 第一阶段：收集所有符合条件的记录
@@ -223,6 +228,13 @@ def export_site_data(
     print(f"    导出记录: {exported_count}")
     print(f"    跳过记录: {skipped_count}")
     print(f"    输出目录: {out_dir}")
+
+    # 一致性校验
+    actual_docs = len(list(docs_dir.glob("*.json")))
+    if actual_docs != exported_count:
+        print(f"\n[!] 警告: index.json({exported_count}条) 与 docs/({actual_docs}个文件) 数量不一致!")
+    else:
+        print(f"[OK] 一致性校验通过: index.json 与 docs/ 均为 {exported_count} 条")
 
 
 def main():

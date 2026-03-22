@@ -7,6 +7,8 @@ from .summarizer import render_summary_markdown, summarize_text
 from .utils import md_to_text, write_text
 from .web_browser import classify_wechat_playwright_result, try_fetch_with_playwright
 
+PROJECT_ROOT = Path(__file__).parent.parent
+
 
 def is_wechat_article_url(url: str) -> bool:
     return "mp.weixin.qq.com" in url.lower()
@@ -82,6 +84,59 @@ def infer_wechat_title(page_title: str | None, content_text: str) -> str:
     return "wechat-article"
 
 
+def download_article_images(html: str, doc_id: str, base_dir: Path) -> str:
+    """下载文章图片到本地，替换 src 为站内路径 /images/<doc_id>/"""
+    soup = BeautifulSoup(html, "html.parser")
+    imgs = [img for img in soup.find_all("img") if (img.get("src") or "").startswith("http")]
+    if not imgs:
+        return html
+
+    img_dir = base_dir / "knowledge-vault" / "assets" / "images" / doc_id
+    img_dir.mkdir(parents=True, exist_ok=True)
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        "Referer": "https://mp.weixin.qq.com/",
+    }
+    ct_to_ext = {"image/jpeg": "jpg", "image/png": "png", "image/gif": "gif", "image/webp": "webp"}
+
+    for idx, img in enumerate(imgs, 1):
+        src = img["src"]
+        try:
+            with httpx.Client(timeout=20, follow_redirects=True) as client:
+                resp = client.get(src, headers=headers)
+                resp.raise_for_status()
+            ct = resp.headers.get("content-type", "image/jpeg").split(";")[0].strip()
+            if ct not in ct_to_ext and "wx_fmt=" in src:
+                fmt = src.split("wx_fmt=")[-1].split("&")[0]
+                ext = "jpg" if fmt in ("jpeg", "jpg") else fmt if fmt in ("png", "gif", "webp") else "jpg"
+            else:
+                ext = ct_to_ext.get(ct, "jpg")
+            filename = f"{idx:03d}.{ext}"
+            (img_dir / filename).write_bytes(resp.content)
+            img["src"] = f"/images/{doc_id}/{filename}"
+            print(f"    [img] {idx}/{len(imgs)} {filename} ({len(resp.content)//1024}KB)")
+        except Exception as e:
+            print(f"[!] 图片下载失败 ({idx}): {src[:80]} - {e}")
+
+    return str(soup)
+
+
+def extract_article_html(html: str) -> str | None:
+    """从微信文章页面提取正文 HTML，保留图片、链接、排版"""
+    soup = BeautifulSoup(html, "html.parser")
+    content = soup.find(id="js_content") or soup.find(class_="rich_media_content")
+    if not content:
+        return None
+    for tag in content.find_all(["script", "style", "noscript"]):
+        tag.decompose()
+    for img in content.find_all("img"):
+        if img.get("data-src") and not img.get("src"):
+            img["src"] = img["data-src"]
+        img.attrs = {k: v for k, v in img.attrs.items() if k in ("src", "alt", "width", "height")}
+    return str(content)
+
+
 def process_web_wechat(url: str, raw_dir: Path) -> dict:
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"}
     with httpx.Client(timeout=20, follow_redirects=True, headers=headers) as client:
@@ -111,17 +166,11 @@ def process_web_wechat(url: str, raw_dir: Path) -> dict:
             inferred_title = infer_wechat_title(title, content_text)
             summary_data = summarize_text(content_text, content_type="web")
             summary = summary_data.get("summary", "")
-            content_md = "\n".join([
-                "## 微信文章抓取",
-                "",
-                "- 状态：ok",
-                "- 读取方式：Playwright browser priority（可人工验证）",
-                f"- 最终跳转：{pw_result.get('final_url', final_url)}",
-                "",
-                render_summary_markdown(summary_data),
-                "",
-                content_text,
-            ])
+            content_html = extract_article_html(pw_result.get("html", ""))
+            if content_html:
+                doc_id = raw_dir.name
+                content_html = download_article_images(content_html, doc_id, PROJECT_ROOT)
+            content_md = "\n".join([render_summary_markdown(summary_data), "", content_text])
             return {
                 "type": "web",
                 "source": url,
@@ -130,6 +179,7 @@ def process_web_wechat(url: str, raw_dir: Path) -> dict:
                 "summary": summary,
                 "summary_data": summary_data,
                 "content_md": content_md,
+                "content_html": content_html,
                 "content_text": content_text,
                 "raw_path": str(pw_raw_path),
                 "status": "processed" if content_text.strip() else "partial",
@@ -144,15 +194,7 @@ def process_web_wechat(url: str, raw_dir: Path) -> dict:
                 "source_type": "url",
                 "title": title or "wechat-article-blocked",
                 "summary": pw_classification.get("message", "微信文章读取受限"),
-                "content_md": "\n".join([
-                    "## 抓取状态",
-                    "",
-                    f"- 状态：blocked",
-                    f"- 原因：{pw_classification.get('block_reason')}",
-                    f"- 说明：{pw_classification.get('message')}",
-                    "- 读取方式：Playwright browser priority（可人工验证）",
-                    f"- 最终跳转：{pw_result.get('final_url', final_url)}",
-                ]),
+                "content_md": pw_classification.get("message", "微信文章读取受限"),
                 "content_text": pw_classification.get("message", "微信文章读取受限"),
                 "raw_path": str(pw_raw_path),
                 "status": "blocked",
@@ -171,16 +213,7 @@ def process_web_wechat(url: str, raw_dir: Path) -> dict:
                 "source_type": "url",
                 "title": title or "wechat-article-blocked",
                 "summary": jina_classification.get("message", "微信文章读取受限"),
-                "content_md": "\n".join([
-                    "## 抓取状态",
-                    "",
-                    f"- 状态：blocked",
-                    f"- 原因：{jina_classification.get('block_reason')}",
-                    f"- 说明：{jina_classification.get('message')}",
-                    "- 读取方式：Jina Reader fallback",
-                    f"- Jina URL：{jina_result['reader_url']}",
-                    f"- 最终跳转：{final_url}",
-                ]),
+                "content_md": jina_classification.get("message", "微信文章读取受限"),
                 "content_text": jina_classification.get("message", "微信文章读取受限"),
                 "raw_path": str(raw_path),
                 "status": "blocked",
@@ -194,17 +227,7 @@ def process_web_wechat(url: str, raw_dir: Path) -> dict:
             inferred_title = infer_wechat_title(title, content_text)
             summary_data = summarize_text(content_text, content_type="web")
             summary = summary_data.get("summary", "")
-            content_md = "\n".join([
-                "## 微信文章抓取",
-                "",
-                "- 状态：ok",
-                "- 读取方式：Jina Reader fallback",
-                f"- Jina URL：{jina_result['reader_url']}",
-                "",
-                render_summary_markdown(summary_data),
-                "",
-                extracted_md,
-            ])
+            content_md = "\n".join([render_summary_markdown(summary_data), "", extracted_md])
             return {
                 "type": "web",
                 "source": url,
