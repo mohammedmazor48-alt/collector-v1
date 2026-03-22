@@ -1,0 +1,60 @@
+{
+  "id": "20260318-003036-145847",
+  "type": "web",
+  "title": "玩 OpenClaw，比 Mac Mini 更香的是 无头Macbook！",
+  "source": "https://mp.weixin.qq.com/s/yS6k5OTWoa23JyM7Hh7LYg",
+  "source_type": "url",
+  "captured_at": "2026-03-18T00:31:05.628615+08:00",
+  "published_at": null,
+  "author": null,
+  "language": "zh",
+  "summary": "作者推荐本地部署OpenClaw使用「双Mac」组合，重点介绍用无头MacBook（无屏幕MacBook）替代Mac Mini的方案。无头MacBook自带键盘、触摸板、麦克风和UPS电源，性价比更高（1800元即可入手M1/16G/256G）。文章还分享了使用无头MacBook的实用技巧，包括解决通用控制连接问题、屏幕旋转设置、电池保养及重装系统注意事项，认为这是玩OpenClaw更便携、整洁且经济的选择。",
+  "content_text": "玩 OpenClaw，比 Mac Mini 更香的是 无头Macbook！\n原创 小特叔叔 小特叔叔\n 2026年3月4日 22:00 上海\n强烈建议，OpenClaw 部署在本地了玩。\n之前我发过一个视频，演示了一下为什么要「双Mac」放本地来用，因为比起在飞书/telegram 里对话，能直接打开openclaw 的 workspace，直接打开命令行，直接修改 json、skill文档，很多时候还是方便太多了。\n别折腾云端，别折腾老旧 windows 了，玩 OpenClaw，就是双 Mac 组合。\n就因为 iCloud 的「通用控制」功能。\n这功能的核心，就是用一套键鼠来控制两台独立的 Mac，非常丝滑。\n我也买过第三方付费软件，从功能完整度、到延迟都跟原生的「通用控制」完全比不了。\n当然，除了简单的鼠标键盘可以丝滑跨设备控制之外，还有：\n两台设备的剪贴板也是打通的；\n桌面文件可以直接拖拽，相互复制；\nChrome浏览器什么的，也支持原来的「接力」功能，在这个电脑看到个不错的软件，那边浏览器打开下载安装就行。\n如果你担心 iCloud 安全问题的话，可以把所有同步项目全部关闭。\n\n\n两个月前，我也是咸鱼 3200 买了台 Mac Mini 开启 OpenClaw 之路，但是用着用着我发现：\nMac Mini，还是有一些不方便的——比如：\n需要额外配置键盘、鼠标备用；\n要另外买个麦克风来做语音输入等等；\n东西我都有，但桌面确实杂乱了很多；\n而且偶尔家里、公司带来带去，便携性真一般，放包里不咋好放。\n所以，我就盯上了「无头骑士」—— 没有屏幕的 MacBook！它自带键盘、触摸板、麦克风；甚至还给你弄好 UPS 电源。\n我这台 M1 / 16G / 256G的 Macbook Air，橙色 95 新，电池健康 100%，花了 1800 块。因为我也不会拿它来直接做写代码编译什么的，M1 和 M4 的性能差异对我几乎没啥影响。\nMac Mini 又挂咸鱼 3200 卖了，省了 1400！\n但更老的 Macbook ，非苹果芯片的就不作推荐了，因为整个安装环境生态都完全不一样了，不值得折腾。\n\n\n\n\n当然，玩无头骑士，不可避免地会遇到些坑，我给大家总结一下：\n最大的坑：死活连不上「通用控制」\n问了几个AI，他们也是瞎扯淡，居然跟我说因为是没有原生屏幕的问题。\n实际上，我摸索了一通，发现可能是因为某些天线跟屏幕组件有关系，导致蓝牙/WiFi 信号弱。\n当我把笔记本放在无头骑士旁边的时候，就丝滑接入了，非常稳定！如果你的 Mac 也无法连上「通用控制」，就建议你也把他们放一起试试。\n屏幕旋转问题\n因为 我主要是用对话网页跟 openclaw交流，所以我希望屏幕旋转当竖屏。但镜像那块不存在的内置屏幕后，外接的大屏幕居然没有旋转设置了。\n所以我装了个第三方软件 —— Better Display，免费的就行。\n把内建显示屏关掉，就可以设置 旋转 外接屏幕了。\n\n\n电池问题\n长远考虑，毕竟一直接着电源用。\n为了让电池更长久耐用点，安装了 AIDente 软件，限制充电到 70%。\n重装系统\n可能你需要买两个小磁铁，来欺骗 Macbook 盒盖，才能在启动环节在外屏显示，方便重装系统。\nPS，盒盖状态下，触摸板键盘都用不了，可能还需要个拓展坞。\n\n\n微信输入法\n跨设备输入，特别跟手机端交互，我还推荐把微信输入法装着，是真方便。\n\n\n\n\n当然，预算无所谓的，也并非一定要无头。\n不是有头Macbook 不好用，只是无头性价比更高，也更 Cool 点 。\n\n\n\n-END-\n\n​\n小特叔叔\n赞\n分享\n推荐\n写留言",
+  "content_hash": "sha256:676538f5b0798de66d7d84c7dbe9e6aab3b143c83dd21e2bac25401775dac36b",
+  "source_file_hash": null,
+  "status": "processed",
+  "tags": [
+    "微信文章",
+    "OpenClaw",
+    "Mac"
+  ],
+  "created_at": "2026-03-18T00:31:05.628710+08:00",
+  "updated_at": "2026-03-18T00:31:05.628753+08:00",
+  "raw_path": "knowledge-vault\\raw\\2026\\03\\20260318-003036-145847\\source-wechat-playwright.html",
+  "summary_data": {
+    "summary": "作者推荐本地部署OpenClaw使用「双Mac」组合，重点介绍用无头MacBook（无屏幕MacBook）替代Mac Mini的方案。无头MacBook自带键盘、触摸板、麦克风和UPS电源，性价比更高（1800元即可入手M1/16G/256G）。文章还分享了使用无头MacBook的实用技巧，包括解决通用控制连接问题、屏幕旋转设置、电池保养及重装系统注意事项，认为这是玩OpenClaw更便携、整洁且经济的选择。",
+    "bullets": [
+      "推荐使用无头MacBook（无屏幕MacBook）作为OpenClaw本地部署设备，性价比高于Mac Mini",
+      "利用iCloud「通用控制」实现双Mac无缝协作，共享键鼠、剪贴板和文件拖拽功能",
+      "无头MacBook自带键盘、触摸板、麦克风和UPS电源，节省桌面空间且便于携带",
+      "解决无头MacBook常见问题：靠近放置确保通用控制连接、用Better Display实现屏幕旋转、AIDente保护电池",
+      "建议选择M1及后续芯片机型，避免Intel旧款；重装系统需磁铁模拟盒盖状态"
+    ],
+    "action_items": [
+      "购买M1芯片及以上无头MacBook（建议16G内存）用于OpenClaw本地部署",
+      "安装Better Display解决外接显示器旋转问题",
+      "安装AIDente设置充电上限至70%以延长电池寿命",
+      "准备小磁铁用于可能的系统重装需求",
+      "安装微信输入法优化跨设备输入体验"
+    ],
+    "keywords": [
+      "OpenClaw",
+      "无头MacBook",
+      "通用控制",
+      "Mac Mini",
+      "本地部署",
+      "AIDente",
+      "Better Display",
+      "双Mac组合"
+    ],
+    "backend": "openai",
+    "model": "kimi-for-coding",
+    "base_url": "https://api.kimi.com/coding/v1",
+    "auth_source": "env"
+  },
+  "block_reason": null,
+  "final_url": "https://mp.weixin.qq.com/s/yS6k5OTWoa23JyM7Hh7LYg",
+  "wechat_backend": "playwright",
+  "note_path": "knowledge-vault\\notes\\2026\\03\\20260318-003036-145847-玩-openclaw-比-mac-mini-更香的是-无头macbook.md",
+  "meta_path": "knowledge-vault\\meta\\2026\\03\\20260318-003036-145847.json"
+}
