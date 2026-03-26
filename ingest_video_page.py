@@ -18,6 +18,7 @@ from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 from playwright.sync_api import sync_playwright
 
 from processors.utils import load_config
+from lib.baidu_video_extract import is_baidu_video_url, run_extraction as _baidu_extract
 
 DEFAULT_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
@@ -364,7 +365,111 @@ def main():
         notify_webhook,
     )
 
-    if should_skip_http_extract(args.url):
+    notify_event(
+        "start",
+        {
+            "url": args.url,
+            "browser_wait_seconds": browser_wait_seconds,
+            "block_wait_seconds": block_wait_seconds,
+        },
+        notify_file,
+        notify_webhook,
+    )
+
+    # ── 百度视频：优先走专用提取模块 ──────────────────────────────────────
+    if is_baidu_video_url(args.url):
+        print("Baidu video URL detected. Using extract_baidu_video module.")
+        notify_event(
+            "baidu_extract_start",
+            {"url": args.url},
+            notify_file,
+            notify_webhook,
+        )
+        baidu_result = _baidu_extract(
+            url=args.url,
+            headless=args.headless,
+            total_timeout=15,
+            save_debug_on_fail=True,
+        )
+        if not baidu_result.get("ok"):
+            reason = baidu_result.get("reason", "unknown")
+            debug_dir = baidu_result.get("debug_dir")
+            print(f"Baidu video extraction failed: {reason}")
+            if debug_dir:
+                print(f"Debug artifacts saved to: {debug_dir}")
+            notify_event(
+                "baidu_extract_failed",
+                {
+                    "url": args.url,
+                    "reason": reason,
+                    "step": baidu_result.get("step"),
+                    "debug_dir": debug_dir,
+                },
+                notify_file,
+                notify_webhook,
+            )
+            raise SystemExit(2)
+        video_url = baidu_result["video_url"]
+        detected_title = args.title or baidu_result.get("title", "")
+        print(f"Baidu extract succeeded: {video_url}")
+        notify_event(
+            "baidu_extract_done",
+            {
+                "url": args.url,
+                "resolved_video_url": video_url,
+                "source": baidu_result.get("source"),
+                "title": detected_title,
+            },
+            notify_file,
+            notify_webhook,
+        )
+        # 直接跳到下载/转录逻辑
+        final_title = detected_title
+        final_tags = infer_default_tags(args.url, args.tags)
+        notify_event(
+            "resolved",
+            {
+                "url": args.url,
+                "title": final_title,
+                "resolved_video_url": video_url,
+                "tags": final_tags,
+            },
+            notify_file,
+            notify_webhook,
+        )
+        if not args.extract_only:
+            result = run_ingest_remote(video_url, tags=final_tags, title=final_title, force=args.force)
+            if result.stdout:
+                print(result.stdout.strip())
+            if result.returncode != 0:
+                if result.stderr:
+                    print(result.stderr.strip())
+                notify_event(
+                    "ingest_failed",
+                    {
+                        "url": args.url,
+                        "title": final_title,
+                        "resolved_video_url": video_url,
+                        "returncode": result.returncode,
+                        "stderr": (result.stderr or "")[-4000:],
+                    },
+                    notify_file,
+                    notify_webhook,
+                )
+                raise SystemExit(result.returncode)
+            notify_event(
+                "done",
+                {
+                    "url": args.url,
+                    "title": final_title,
+                    "resolved_video_url": video_url,
+                    "stdout": (result.stdout or "")[-4000:],
+                },
+                notify_file,
+                notify_webhook,
+            )
+        return
+    # ── 非百度：走原有 HTTP + Playwright 流程 ────────────────────────────
         print("Browser-first whitelist matched. Skipping HTTP direct extraction.")
         print("Configured browser-first hosts: " + ", ".join(sorted(browser_first_hosts)))
         notify_event(
