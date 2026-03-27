@@ -385,7 +385,7 @@ def run_extraction(
 
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=headless, channel="chrome")
+            browser = p.chromium.launch(headless=headless)
             page = browser.new_page()
 
             # 注册 Layer 3 监听器（必须在 goto 前）

@@ -185,7 +185,7 @@ def extract_with_browser(url: str, headless: bool = False, wait_seconds: int = 2
     blocked = False
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=headless, channel="chrome")
+        browser = p.chromium.launch(headless=headless)
         page = browser.new_page()
 
         def handle_response(resp):
@@ -288,7 +288,7 @@ def extract_with_browser(url: str, headless: bool = False, wait_seconds: int = 2
 
 
 def run_ingest_remote(video_url: str, tags: str = "", title: str = "", force: bool = False):
-    cmd = [sys.executable, "ingest_remote.py", video_url]
+    cmd = [sys.executable, str(Path(__file__).resolve().parent / "ingest_remote.py"), video_url]
     if tags:
         cmd.extend(["--tags", tags])
     if title:
@@ -353,17 +353,6 @@ def main():
     auto_publish_site = args.publish_site or str(get_video_page_config().get("auto_publish_site", "false")).lower() == "true"
     if auto_publish_site:
         auto_export_site = True
-
-    notify_event(
-        "start",
-        {
-            "url": args.url,
-            "browser_wait_seconds": browser_wait_seconds,
-            "block_wait_seconds": block_wait_seconds,
-        },
-        notify_file,
-        notify_webhook,
-    )
 
     notify_event(
         "start",
@@ -470,6 +459,7 @@ def main():
             )
         return
     # ── 非百度：走原有 HTTP + Playwright 流程 ────────────────────────────
+    if should_skip_http_extract(args.url):
         print("Browser-first whitelist matched. Skipping HTTP direct extraction.")
         print("Configured browser-first hosts: " + ", ".join(sorted(browser_first_hosts)))
         notify_event(

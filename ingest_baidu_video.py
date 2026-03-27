@@ -65,7 +65,7 @@ def main():
     if title:
         print(f"[baidu] 标题：{title}")
 
-    cmd = [sys.executable, "ingest_remote.py", video_url]
+    cmd = [sys.executable, str(Path(__file__).resolve().parent / "ingest_remote.py"), video_url]
     if args.tags:
         cmd.extend(["--tags", args.tags])
     if title:
